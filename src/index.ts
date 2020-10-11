@@ -11,7 +11,7 @@ import {
   isVoid,
   isFunctionType,
   isBasicObjectType,
-  isLiteralType,
+  isLiteralType
 } from "./type";
 import { extractFlags } from "./flags";
 import { defaultConfig, TsToIoConfig, DEFAULT_FILE_NAME } from "./config";
@@ -58,20 +58,20 @@ const processObjectType = <R>(typemap: TypeMap<R>) => (
   const propertyProcessor = processProperty(typemap)(checker);
   // TODO: Maybe use a partition function?
   const requiredProperties = properties.filter(
-    (p) => !(p.valueDeclaration as ts.ParameterDeclaration).questionToken
+    p => !(p.valueDeclaration as ts.ParameterDeclaration).questionToken
   );
   const optionalProperties = properties.filter(
-    (p) => (p.valueDeclaration as ts.ParameterDeclaration).questionToken
+    p => (p.valueDeclaration as ts.ParameterDeclaration).questionToken
   );
   return typemap.object({
-    properties: requiredProperties.map((p) => [
+    properties: requiredProperties.map(p => [
       p.name,
-      () => propertyProcessor(p),
+      () => propertyProcessor(p)
     ]),
-    optionalProperties: optionalProperties.map((p) => [
+    optionalProperties: optionalProperties.map(p => [
       p.name,
-      () => propertyProcessor(p),
-    ]),
+      () => propertyProcessor(p)
+    ])
   });
 };
 
@@ -102,27 +102,27 @@ const processType = <R>(typemap: TypeMap<R>) => (checker: ts.TypeChecker) => (
     const [key, value] = type.aliasTypeArguments!;
     return typemap.record({
       key: () => processType(typemap)(checker)(key),
-      value: () => processType(typemap)(checker)(value),
+      value: () => processType(typemap)(checker)(value)
     });
   } else if (type.isUnion()) {
     return typemap.union(
-      type.types.map((type) => () => processType(typemap)(checker)(type))
+      type.types.map(type => () => processType(typemap)(checker)(type))
     );
   } else if (type.isIntersection()) {
     return typemap.intersection(
-      type.types.map((type) => () => processType(typemap)(checker)(type))
+      type.types.map(type => () => processType(typemap)(checker)(type))
     );
-  } else if (isTupleType(type, checker)) {
+  } else if (isTupleType(type)) {
     if (type.hasRestElement) {
       // TODO
       console.warn("Tuple rest elements are not currently supported");
     }
     return typemap.tuple(
-      (type as ts.TupleType).typeArguments!.map((type) => () =>
+      (type as ts.TupleType).typeArguments!.map(type => () =>
         processType(typemap)(checker)(type)
       )
     );
-  } else if (isArrayType(type, checker)) {
+  } else if (isArrayType(type)) {
     return typemap.array(() =>
       processType(typemap)(checker)(type.getNumberIndexType()!)
     );
@@ -200,7 +200,7 @@ const visit = <R>(
 };
 
 const compilerOptions: ts.CompilerOptions = {
-  strictNullChecks: true,
+  strictNullChecks: true
 };
 
 export function processTypes<R>(
@@ -230,7 +230,7 @@ export function processTypes<R>(
           languageVersion,
           ...restArgs
         );
-    },
+    }
   };
 
   const program = ts.createProgram(
