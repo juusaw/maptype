@@ -1,0 +1,3 @@
+# maptype
+
+Docs coming soon
