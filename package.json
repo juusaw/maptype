@@ -10,12 +10,10 @@
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
   "files": [
-    "build/**/*",
-    "cli.js"
+    "build/**/*"
   ],
   "scripts": {
     "build": "tsc",
-    "start": "./cli.js",
     "test": "jest"
   },
   "dependencies": {
